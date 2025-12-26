@@ -1,6 +1,12 @@
-[tool.black]
-line-length = 88
-target-version = ['py312']
+[project]
+name = "python-toolbox"
+version = "0.1.0"
+description = "A collection of python utility scripts"
+requires-python = ">=3.12"
+dependencies = [
+    "Pillow>=10.0.0",
+    "GitPython>=3.1.0",
+]
 
 [tool.ruff]
 line-length = 88
@@ -8,3 +14,4 @@ target-version = "py312"
 
 [tool.ruff.lint]
 select = ["E", "F", "I"]
+ignore = ["E501"]  # Ignore line length for now as Black handles it mostly, and long comments/strings are annoying

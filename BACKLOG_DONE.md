@@ -38,3 +38,10 @@
 - **Auto-Detection**: `toolbox.py` checks dependencies before execution.
 - **Install Command**: Added `check-deps` via `toolbox.py install <tool>`.
 - **UX**: Helpful error messages with venv instructions for PEP 668 environments.
+
+## Lot 3: Maintenance & CI
+- **Quality**: Added `toolbox.py check` to run `ruff` and `black`.
+- **Formatting**: Integrated auto-formatting via `toolbox.py check --fix`.
+- **Config**: Added `pyproject.toml` for tool configuration.
+- **Cleanup**: Fixed all linting errors (unused imports, line lengths, variables).
+- **Robustness**: Verified cross-platform compatibility (pathlib usage).

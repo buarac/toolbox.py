@@ -22,6 +22,8 @@ Use the `toolbox.py` CLI to discover and run tools:
 ./toolbox.py new [name]       # Create a new tool
 ./toolbox.py install [tool]   # Install dependencies for a tool
 ./toolbox.py run [tool_name]  # Run a specific tool (auto-checks deps)
+./toolbox.py check            # Run code quality checks (linting/format)
+
 
 ```
 

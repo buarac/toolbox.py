@@ -6,8 +6,9 @@
 - **Portability**: Code must use `pathlib` for paths and handle OS differences (macOS/Linux).
 
 ## 🔄 Current State
-- **Phase**: Lot 3 - Maintenance & CI (Upcoming)
-- **Status**: Lot 2 (Dependency Management) implementation complete.
+- **Phase**: Maintenance (Stable)
+- **Status**: Lot 3 (Maintenance & CI) complete. Codebase is linted and robust.
+
 
 - **Core Components**:
     - `toolbox.py`: Central CLI (list, run, new).
