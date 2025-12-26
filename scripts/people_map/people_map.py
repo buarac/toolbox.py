@@ -151,11 +151,14 @@ def main():
     logging.info("🚀 Starting People Map Server...")
     logging.info("🌍 Open http://127.0.0.1:5000 in your browser")
 
-    if os.environ.get("WERKZEUG_RUN_MAIN") != "true":
+    debug_mode = os.environ.get("FLASK_DEBUG", "False").lower() == "true"
+    
+    if os.environ.get("WERKZEUG_RUN_MAIN") != "true" and not os.environ.get("NO_BROWSER"):
         # Only open browser on the primary process, not the reloader
         threading.Timer(1.5, open_browser).start()
 
-    app.run(host="127.0.0.1", port=5000, debug=True)
+    port = int(os.environ.get("PORT", 5001))
+    app.run(host="127.0.0.1", port=port, debug=debug_mode)
 
 
 if __name__ == "__main__":

@@ -52,3 +52,9 @@
 - **Data**: Étendu avec Vent, UV, Lever/Coucher soleil, Proba pluie.
 - **Output**: Tableau console élargi + Rapport HTML "Card Design".
 - **Tech**: `requests`, Geocoding, `webbrowser`.
+
+## Lot 5: People Map
+- **App**: Flask Web Server (Port 5001 default).
+- **Features**: Interactive Map (Leaflet), Geocoding (Open-Meteo), Persistence (JSON).
+- **UX**: "Wow" design, auto-browser open, fast interactions.
+- **Tech**: Flask, LeafletJS, threading.
