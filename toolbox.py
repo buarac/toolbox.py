@@ -20,7 +20,9 @@ import argparse
 import subprocess
 import logging
 from pathlib import Path
-from typing import List, Dict
+from typing import List, Dict, Optional
+import importlib.metadata
+import re
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format="%(message)s")
@@ -53,6 +55,73 @@ def get_scripts() -> Dict[str, Path]:
         scripts[path.stem] = path
     
     return scripts
+
+def parse_requirements(req_path: Path) -> List[str]:
+    """Parse requirements.txt to get package names."""
+    requirements = []
+    if not req_path.exists():
+        return requirements
+        
+    with open(req_path, 'r', encoding='utf-8') as f:
+        for line in f:
+            line = line.strip()
+            if not line or line.startswith('#'):
+                continue
+            # Simple regex to extract package name (ignores version specifiers for checking)
+            # Matches "package_name" or "package-name" at start of line
+            match = re.match(r'^([a-zA-Z0-9_\-]+)', line)
+            if match:
+                requirements.append(match.group(1))
+    return requirements
+
+def check_dependencies(script_path: Path) -> List[str]:
+    """Check if dependencies for a script are installed."""
+    req_path = script_path.parent / "requirements.txt"
+    missing = []
+    
+    if req_path.exists():
+        required_packages = parse_requirements(req_path)
+        for pkg in required_packages:
+            try:
+                # Map common package names to their import names if needed
+                # For now, rely on standard metadata names
+                importlib.metadata.distribution(pkg)
+            except importlib.metadata.PackageNotFoundError:
+                missing.append(pkg)
+    
+    return missing
+
+def install_dependencies(script_path: Path) -> bool:
+    """Install dependencies for a script using pip."""
+    req_path = script_path.parent / "requirements.txt"
+    if not req_path.exists():
+        logging.info("✨ No dependencies to install.")
+        return True
+        
+    logging.info(f"📦 Installing dependencies from {req_path.name}...")
+    try:
+        # Capture output to check for specific errors
+        result = subprocess.run(
+            [sys.executable, "-m", "pip", "install", "-r", str(req_path)],
+            check=True,
+            capture_output=True,
+            text=True
+        )
+        logging.info(result.stdout)
+        logging.info("✅ Dependencies installed successfully.")
+        return True
+    except subprocess.CalledProcessError as e:
+        logging.error(f"💥 Failed to install dependencies (Exit code {e.returncode})")
+        logging.error(e.stderr)
+        
+        if "externally-managed-environment" in e.stderr:
+            logging.warning("\n💡 HINT: You are trying to install packages in a system-managed Python environment.")
+            logging.warning("   Please create and activate a virtual environment first:")
+            logging.warning(f"   python3 -m venv .venv")
+            logging.warning(f"   source .venv/bin/activate")
+            logging.warning(f"   python3 toolbox.py install {script_path.stem}")
+            
+        return False
 
 def command_list(args):
     """List available scripts with descriptions."""
@@ -120,6 +189,28 @@ def command_run(args):
         
     script_path = scripts[script_name]
     logging.info(f"🚀 Launching {script_name}...")
+    
+    # Check dependencies before running
+    missing_deps = check_dependencies(script_path)
+    if missing_deps:
+        logging.warning(f"⚠️  Missing dependencies: {', '.join(missing_deps)}")
+        logging.info("💡 You can install them by running:")
+        logging.info(f"   python3 toolbox.py install {script_name}")
+        
+        # Interactive prompt?
+        # For CLI automation, let's keep it simple: warn and proceed (might crash) 
+        # OR prompt user if interactive.
+        if sys.stdin.isatty():
+            response = input("❓ Attempt to install them now? [y/N] ").lower()
+            if response == 'y':
+                if not install_dependencies(script_path):
+                    logging.error("❌ Installation failed. Aborting.")
+                    sys.exit(1)
+            else:
+                logging.warning("⚠️  Proceeding without dependencies. Script may crash.")
+        else:
+             logging.warning("⚠️  Non-interactive mode: Running anyway.")
+
     
     # Construct command: python3 [script_path] [legacy_args]
     cmd = [sys.executable, str(script_path)] + args.script_args
@@ -195,6 +286,18 @@ if __name__ == "__main__":
     logging.info(f"👉 Run it with: python3 {target_file}")
     logging.info(f"👉 Or via toolbox: python3 toolbox.py run {name}")
 
+def command_install(args):
+    """Install dependencies for a specific script."""
+    scripts = get_scripts()
+    script_name = args.script
+    
+    if script_name not in scripts:
+        logging.error(f"❌ Script '{script_name}' not found.")
+        sys.exit(1)
+        
+    script_path = scripts[script_name]
+    install_dependencies(script_path)
+
 def main():
     parser = argparse.ArgumentParser(description="Python Toolbox CLI")
     subparsers = parser.add_subparsers(dest="command", help="Command to execute")
@@ -210,6 +313,10 @@ def main():
     # New command
     new_parser = subparsers.add_parser("new", help="Create a new script")
     new_parser.add_argument("name", help="Name of the new tool")
+
+    # Install command
+    install_parser = subparsers.add_parser("install", help="Install dependencies for a tool")
+    install_parser.add_argument("script", help="Name of the tool")
     
     args = parser.parse_args()
     
@@ -219,6 +326,8 @@ def main():
         command_run(args)
     elif args.command == "new":
         command_new(args)
+    elif args.command == "install":
+        command_install(args)
     else:
         parser.print_help()
 

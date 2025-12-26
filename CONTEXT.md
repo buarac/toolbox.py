@@ -2,12 +2,13 @@
 
 ## 🏗️ Architecture
 - **Modular Design**: Scripts are isolated in `scripts/`, sharing common utilities from `core/`.
-- **Dependency Management**: Single `requirements.txt` at root.
+- **Dependency Management**: Hybrid. Global `requirements.txt` for dev tools, per-script `requirements.txt` for individual tools.
 - **Portability**: Code must use `pathlib` for paths and handle OS differences (macOS/Linux).
 
 ## 🔄 Current State
-- **Phase**: Lot 2 - Dependency Management (Upcoming)
-- **Status**: Toolbox Core & Git Health Check implemented.
+- **Phase**: Lot 3 - Maintenance & CI (Upcoming)
+- **Status**: Lot 2 (Dependency Management) implementation complete.
+
 - **Core Components**:
     - `toolbox.py`: Central CLI (list, run, new).
     - `core/system_check.py`: Validates environment.
@@ -18,5 +19,5 @@
         - `disk_usage/`: Directory size calculator.
 
 ## 📅 Next Steps
-- Automate dependency management (Lot 2).
-- Improve cross-platform path handling.
+- **CI/CD**: Add linter integration to toolbox (check code quality).
+- **Cross-platform**: Verify path handling on Windows/Linux.

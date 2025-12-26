@@ -8,6 +8,10 @@ A structured, portable (macOS & Ubuntu) ecosystem for Python utility scripts.
     - `image_resizer`: Batch resize/compress images.
     - `file_cleaner`: Auto-delete old files with safety checks.
     - `git_health`: Quick audit of git repo status.
+- **Dependency Management**:
+    - Automatic dependency check before launch.
+    - `install` command to setup environment.
+    - Per-script `requirements.txt`.
 
 ## 🛠️ Usage
 
@@ -15,8 +19,10 @@ A structured, portable (macOS & Ubuntu) ecosystem for Python utility scripts.
 Use the `toolbox.py` CLI to discover and run tools:
 ```bash
 ./toolbox.py list             # List all available tools
-./toolbox.py run [tool_name]  # Run a specific tool
 ./toolbox.py new [name]       # Create a new tool
+./toolbox.py install [tool]   # Install dependencies for a tool
+./toolbox.py run [tool_name]  # Run a specific tool (auto-checks deps)
+
 ```
 
 ### Examples

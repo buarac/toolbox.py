@@ -31,3 +31,10 @@
 - **Micro-UX**: `list` shows descriptions, `./toolbox.py` executable directly.
 - **Git Health**: `git_health` tool for quick repo audit (branches, dirty state) using `GitPython`.
 - **Disk Usage**: `usage` tool to calculate and display directory sizes (recursive) with depth control.
+
+## Lot 2: Dependency Management
+- **Isolation**: Removed script-specific deps from global `requirements.txt`.
+- **Local Requirements**: Added `requirements.txt` to `image_resizer` and `git_health`.
+- **Auto-Detection**: `toolbox.py` checks dependencies before execution.
+- **Install Command**: Added `check-deps` via `toolbox.py install <tool>`.
+- **UX**: Helpful error messages with venv instructions for PEP 668 environments.
