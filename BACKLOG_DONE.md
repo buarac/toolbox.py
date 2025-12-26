@@ -11,3 +11,7 @@
 - Implemented `scripts/image_resizer/resizer.py`.
 - Added `Pillow` dependency.
 - Verified batch processing and optimization.
+
+## Refactor: Emoji Logging
+- Updated project rules to mandate emojis in logs.
+- Refactored `system_check.py` and `resizer.py` outputs.
