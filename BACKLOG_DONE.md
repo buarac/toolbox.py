@@ -22,3 +22,12 @@
 - Verified on macOS (`st_birthtime`).
 - **Refactor**: Verbose mode listing all files with 🗑️/🛡️.
 - **Fix**: Ignore hidden files (e.g. `.DS_Store`).
+- **Feature**: Depth control (`--depth`). Defaults to current directory (1). Recursion is optional.
+
+## Lot 1: The "Toolbox" Core
+- **toolbox.py**: Central CLI (`list`, `run`, `new`).
+- **Discovery**: Automatically finds scripts in `/scripts`.
+- **Scaffolding**: `new` command creates standardized script templates.
+- **Micro-UX**: `list` shows descriptions, `./toolbox.py` executable directly.
+- **Git Health**: `git_health` tool for quick repo audit (branches, dirty state) using `GitPython`.
+- **Disk Usage**: `usage` tool to calculate and display directory sizes (recursive) with depth control.

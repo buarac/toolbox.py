@@ -30,6 +30,11 @@ Use the `toolbox.py` CLI to discover and run tools:
 ./toolbox.py run git_health
 ```
 
+**Disk Usage**:
+```bash
+./toolbox.py run usage -- --path ~/Projects --depth 2
+```
+
 ## 📂 Structure
 - `toolbox.py`: Entry point.
 - `scripts/`: Utility scripts.

@@ -15,6 +15,7 @@
         - `image_resizer/`: JPEG batch processing.
         - `file_cleaner/`: File cleanup (depth control, dry-run).
         - `git_health/`: Git repository audit.
+        - `disk_usage/`: Directory size calculator.
 
 ## 📅 Next Steps
 - Automate dependency management (Lot 2).
