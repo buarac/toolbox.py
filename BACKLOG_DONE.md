@@ -21,3 +21,4 @@
 - Features: Age filter (days), Dry-run, Confirmation prompt.
 - Verified on macOS (`st_birthtime`).
 - **Refactor**: Verbose mode listing all files with 🗑️/🛡️.
+- **Fix**: Ignore hidden files (e.g. `.DS_Store`).
