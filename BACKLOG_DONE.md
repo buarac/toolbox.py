@@ -20,3 +20,4 @@
 - Implemented `scripts/file_cleaner/cleaner.py`.
 - Features: Age filter (days), Dry-run, Confirmation prompt.
 - Verified on macOS (`st_birthtime`).
+- **Refactor**: Verbose mode listing all files with 🗑️/🛡️.
