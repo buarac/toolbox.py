@@ -29,6 +29,7 @@ def setup_args():
     parser = argparse.ArgumentParser(description="Delete files older than N days.")
     parser.add_argument("--directory", "-d", type=Path, required=True, help="Target directory")
     parser.add_argument("--days", type=int, default=7, help="Age threshold in days (default: 7)")
+    parser.add_argument("--depth", type=int, default=1, help="Recursion depth (1=current dir only, default: 1)")
     parser.add_argument("--dry-run", action="store_true", help="List files without deleting")
     parser.add_argument("--force", action="store_true", help="Delete without confirmation prompt")
     return parser.parse_args()
@@ -58,23 +59,49 @@ def main():
         sys.exit(1)
 
     threshold_days = args.days
-    logging.info(f"🔎 Scanning {args.directory} for files older than {threshold_days} days...")
+    max_depth = args.depth
+    logging.info(f"🔎 Scanning {args.directory} (Depth: {max_depth}) for files older than {threshold_days} days...")
 
     eligible_files = []
     
-    # Scan files
+    # Scan files using os.walk to control depth
     logging.info(f"📂 Scanning files in {args.directory}...")
-    for file_path in args.directory.rglob("*"):
-        if file_path.name.startswith("."):
+    
+    base_depth = len(str(args.directory).rstrip(os.sep).split(os.sep))
+    
+    for root, dirs, files in os.walk(args.directory):
+        # Calculate current depth
+        current_depth = len(root.split(os.sep)) - base_depth + 1
+        
+        # Stop recursing if depth exceeded
+        if current_depth > max_depth:
+            dirs[:] = [] # Prevent os.walk from going deeper
             continue
             
-        if file_path.is_file():
+        for filename in files:
+            if filename.startswith("."):
+                continue
+                
+            file_path = Path(root) / filename
+            
+            # Additional check to ensuring we are not exceeding depth processing files in the current root
+            # (Logic above handles dirs, but files are in current root)
+            if current_depth > max_depth: 
+                continue
+
             age = get_file_age_days(file_path)
+            
+            # Use relative path for cleaner output
+            try:
+                display_path = file_path.relative_to(args.directory)
+            except ValueError:
+                display_path = file_path.name
+
             if age >= threshold_days:
-                logging.info(f"  🗑️  [DELETE] {file_path.name} (Age: {age:.1f} days)")
+                logging.info(f"  🗑️  [DELETE] {display_path} (Age: {age:.1f} days)")
                 eligible_files.append((file_path, age))
             else:
-                logging.info(f"  🛡️   [KEEP]   {file_path.name} (Age: {age:.1f} days)")
+                logging.info(f"  🛡️   [KEEP]   {display_path} (Age: {age:.1f} days)")
 
     if not eligible_files:
         logging.info("✅ No eligible files found for deletion.")
