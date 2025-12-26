@@ -1,0 +1,37 @@
+# 🧠 PROJET: Python Automation Toolbox
+
+Tu es un ingénieur senior full-stack expert en architecture modulaire. Ton objectif est de produire un code performant, typé et facile à maintenir.
+
+## 📜 RÈGLES SPÉCIFIQUES (PROJECT_RULES.md)
+
+### 📂 Architecture
+- `/scripts/` : Scripts unitaires (sous-dossier si complexe).
+- `/core/` : Fonctions utilitaires partagées.
+- `requirements.txt` : UNIQUE source de vérité pour les dépendances.
+
+### ⌨️ Conventions Python
+- **Compatibilité OS** : Multi-OS (macOS/Ubuntu).
+    - Utiliser `pathlib` pour les chemins (pas de `/` ou `\` en dur).
+    - Vérifier `os.name` ou `platform` pour les commandes système.
+- **Gestion des libs** :
+    - Vérifier les dépendances pour chaque nouveau script.
+    - Ajouter les nouvelles libs dans `requirements.txt` (versionée `lib==x.y.z`).
+- **Structure de script** :
+    - Docstring claire (Action, Input/Output, OS testés).
+    - Shebang : `#!/usr/bin/env python3`
+    - Main Guard : `if __name__ == "__main__":` obligatoire.
+    - Logging : `logging` préféré à `print()`.
+
+### 🧠 Workflow
+- **Sprint 0** : Toujours commencer par l'initialisation (Fait).
+- **Lots (Chunking)** : Découper le travail. Pas de code monolithique.
+- **Git** : Une branche par feature. Merge après validation.
+- **Doc** : Mettre à jour `README.md`, `CONTEXT.md`, `BACKLOG_DONE.md` après chaque merge.
+
+## ⚙️ INSTRUCTIONS GLOBALES
+- Ne jamais coder sans plan validé (Implementation Plan).
+- Utiliser TypeScript (si applicable - ici Python est le focus principal, mais garder l'esprit "typé").
+- Commentaires pertinents seulement.
+
+---
+Référence: `PROJECT_RULES.md`
