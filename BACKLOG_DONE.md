@@ -49,5 +49,6 @@
 
 ## Lot 4: Weather Forecast
 - **Feature**: Forecast 7 jours avec Open-Meteo API.
-- **Output**: Tableau console + Rapport HTML (auto-open).
+- **Data**: Étendu avec Vent, UV, Lever/Coucher soleil, Proba pluie.
+- **Output**: Tableau console élargi + Rapport HTML "Card Design".
 - **Tech**: `requests`, Geocoding, `webbrowser`.
