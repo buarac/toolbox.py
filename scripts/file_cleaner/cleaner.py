@@ -63,20 +63,22 @@ def main():
     eligible_files = []
     
     # Scan files
+    logging.info(f"📂 Scanning files in {args.directory}...")
     for file_path in args.directory.rglob("*"):
         if file_path.is_file():
             age = get_file_age_days(file_path)
             if age >= threshold_days:
+                logging.info(f"  🗑️  [DELETE] {file_path.name} (Age: {age:.1f} days)")
                 eligible_files.append((file_path, age))
+            else:
+                logging.info(f"  🛡️   [KEEP]   {file_path.name} (Age: {age:.1f} days)")
 
     if not eligible_files:
-        logging.info("✅ No files found meeting criteria.")
+        logging.info("✅ No eligible files found for deletion.")
         sys.exit(0)
 
-    # List eligible files
-    logging.info(f"📦 Found {len(eligible_files)} files eligible for deletion:")
-    for file_to_del, age in eligible_files:
-        logging.info(f"  📄 {file_to_del.name} (Age: {age:.1f} days)")
+    # Summary
+    logging.info(f"📦 Found {len(eligible_files)} files eligible for deletion.")
 
     # Action logic
     if args.dry_run:
