@@ -21,6 +21,7 @@ Tu es un ingénieur senior full-stack expert en architecture modulaire. Ton obje
     - Shebang : `#!/usr/bin/env python3`
     - Main Guard : `if __name__ == "__main__":` obligatoire.
     - Logging : `logging` préféré à `print()`.
+    - **Emojis** : 🚀 Utiliser des emojis dans les logs pour la lisibilité (✅, ❌, ⚠️).
 
 ### 🧠 Workflow
 - **Sprint 0** : Toujours commencer par l'initialisation (Fait).

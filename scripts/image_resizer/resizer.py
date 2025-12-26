@@ -58,16 +58,16 @@ def process_image(file_path: Path, output_dir: Path, width: int, height: int, qu
             
             output_file = output_dir / file_path.name
             img.save(output_file, "JPEG", quality=quality)
-            logging.info(f"Processed: {file_path.name} -> {output_file} (Quality: {quality})")
+            logging.info(f"✅ Processed: {file_path.name} -> {output_file} (Quality: {quality})")
             
     except Exception as e:
-        logging.error(f"Failed to process {file_path.name}: {e}")
+        logging.error(f"❌ Failed to process {file_path.name}: {e}")
 
 def main():
     args = setup_args()
 
     if not args.input.exists():
-        logging.error(f"Input directory not found: {args.input}")
+        logging.error(f"❌ Input directory not found: {args.input}")
         sys.exit(1)
 
     output_dir = args.output if args.output else args.input / "resized"
@@ -76,16 +76,16 @@ def main():
     images = list(args.input.glob("*.jpg")) + list(args.input.glob("*.jpeg")) + list(args.input.glob("*.JPG")) + list(args.input.glob("*.JPEG"))
     
     if not images:
-        logging.warning(f"No JPEG images found in {args.input}")
+        logging.warning(f"⚠️ No JPEG images found in {args.input}")
         sys.exit(0)
 
-    logging.info(f"Found {len(images)} images. Starting processing...")
-    logging.info(f"Output Directory: {output_dir}")
+    logging.info(f"🚀 Found {len(images)} images. Starting processing...")
+    logging.info(f"📂 Output Directory: {output_dir}")
     
     for img_path in images:
         process_image(img_path, output_dir, args.width, args.height, args.quality)
 
-    logging.info("Batch processing complete.")
+    logging.info("🎉 Batch processing complete.")
 
 if __name__ == "__main__":
     main()

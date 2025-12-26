@@ -29,7 +29,8 @@ Chaque script dans /scripts/ doit suivre ce template minimal :
 1. **Docstring** : Description claire de l'action, entrées/sorties et OS testés.  
 2. **Shebang** : \#\!/usr/bin/env python3.  
 3. **Main Guard** : if \_\_name\_\_ \== "\_\_main\_\_": obligatoire.  
-4. **Logging** : Utilisation du module logging plutôt que print() pour la production.
+4. **Logging** : Utilisation du module logging plutôt que print().
+5. **Emojis** : Les outputs utilisateur (logs INFO/ERROR) DOIVENT utiliser des emojis pour améliorer la lisibilité (ex: ✅, ❌, 🚀, 📦).
 
 ## **🧠 LOGIQUE MÉTIER DE GÉNÉRATION**
 
