@@ -15,3 +15,8 @@
 ## Refactor: Emoji Logging
 - Updated project rules to mandate emojis in logs.
 - Refactored `system_check.py` and `resizer.py` outputs.
+
+## Feature: File Cleaner
+- Implemented `scripts/file_cleaner/cleaner.py`.
+- Features: Age filter (days), Dry-run, Confirmation prompt.
+- Verified on macOS (`st_birthtime`).

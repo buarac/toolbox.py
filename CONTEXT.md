@@ -7,11 +7,12 @@
 
 ## 🔄 Current State
 - **Phase**: Sprint 0 - COMPLETE
-- **Status**: Feature "Image Resizer" completed.
+- **Status**: Feature "File Cleaner" completed.
 - **Core Components**:
     - `core/system_check.py`: Validates environment.
     - `.cursorrules`: Project rules.
     - `scripts/image_resizer/`: JPEG batch processing tool.
+    - `scripts/file_cleaner/`: File cleanup utility.
 
 ## 📅 Next Steps
 - Complete Sprint 0 validation.

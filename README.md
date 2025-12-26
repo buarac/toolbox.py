@@ -35,5 +35,6 @@ A structured, portable (macOS & Ubuntu) ecosystem for Python utility scripts.
 ## 📂 Structure
 - `scripts/`: Utility scripts.
     - `image_resizer/`: Batch JPEG resizer & compressor.
+    - `file_cleaner/`: Delete files older than N days.
 - `core/`: Shared utilities and internal logic.
 - `docs/`: Documentation.
