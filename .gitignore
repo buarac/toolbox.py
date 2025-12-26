@@ -1,3 +1,7 @@
+# Fichiers spécifiques à macOS
+.DS_Store                # Cache d'affichage des dossiers (Desktop Services Store)
+**/.DS_Store             # Pour ignorer tous les .DS_Store, même dans les sous-répertoires
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]
