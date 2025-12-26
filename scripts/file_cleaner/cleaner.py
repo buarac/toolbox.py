@@ -65,6 +65,9 @@ def main():
     # Scan files
     logging.info(f"📂 Scanning files in {args.directory}...")
     for file_path in args.directory.rglob("*"):
+        if file_path.name.startswith("."):
+            continue
+            
         if file_path.is_file():
             age = get_file_age_days(file_path)
             if age >= threshold_days:
