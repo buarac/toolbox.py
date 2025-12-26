@@ -14,7 +14,7 @@ L'outil récupère et affiche désormais :
 ### 2. Rapport HTML "Rich UI"
 Le rapport HTML a été complètement redessiné ("Card Design") pour afficher ces nouvelles données de manière lisible.
 
-![Weather Report Enhanced](docs/images/weather_latest.png)
+![Weather Report Enhanced](images/weather_latest.png)
 
 ### 3. Console
 L'affichage terminal a été élargi pour inclure le Vent et l'UV :
