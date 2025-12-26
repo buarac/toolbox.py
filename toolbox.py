@@ -55,32 +55,58 @@ def get_scripts() -> Dict[str, Path]:
     return scripts
 
 def command_list(args):
-    """List available scripts."""
+    """List available scripts with descriptions."""
     scripts = get_scripts()
     if not scripts:
         logging.info("📭 No scripts found in the toolbox.")
         return
 
-    logging.info(f"🧰 Found {len(scripts)} tools regarding your request:")
-    logging.info("-" * 40)
+    logging.info(f"🧰 Found {len(scripts)} tools in your toolbox:")
+    logging.info("-" * 60)
+    logging.info(f"{'TOOL':<20} | {'DESCRIPTION'}")
+    logging.info("-" * 60)
+    
     for name, path in sorted(scripts.items()):
-        # Try to read docstring for description
-        description = "No description available."
+        description = None
         try:
             with open(path, 'r', encoding='utf-8') as f:
-                first_line = f.readline().strip()
-                if first_line.startswith('"""') or first_line.startswith("'''"):
-                    # Basic parsing, might need improvement
-                   description = first_line.strip('"\'') 
-                # Or check second line if shebang exists
-                elif first_line.startswith("#!"):
-                     second_line = f.readline().strip()
-                     if second_line.startswith('"""') or second_line.startswith("'''"):
-                         description = second_line.strip('"\'')
+                # Naive docstring extraction: read lines until we find a docstring
+                lines = f.readlines()
+                docstring_lines = []
+                in_docstring = False
+                
+                for line in lines:
+                    stripped = line.strip()
+                    if not in_docstring:
+                        if stripped.startswith('"""') or stripped.startswith("'''"):
+                            in_docstring = True
+                            # Handle one-line docstrings: """Description"""
+                            content = stripped.strip('"\'')
+                            if content:
+                                description = content
+                                break
+                    else:
+                        # Inside docstring
+                        if stripped.endswith('"""') or stripped.endswith("'''"):
+                            # End of docstring
+                            content = stripped.strip('"\'')
+                            if content:
+                                docstring_lines.append(content)
+                            break
+                        docstring_lines.append(stripped)
+                
+                if not description and docstring_lines:
+                     # Join first non-empty lines or just take the first one
+                     description = next((l for l in docstring_lines if l), None)
+
         except Exception:
             pass
             
-        logging.info(f"🔧 {name:<20} : {path.relative_to(Path.cwd())}")
+        if not description:
+            description = "No description available."
+            
+        logging.info(f"🔧 {name:<17} : {description}")
+    logging.info("-" * 60)
 
 def command_run(args):
     """Run a specific script."""
