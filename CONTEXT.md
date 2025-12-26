@@ -6,14 +6,16 @@
 - **Portability**: Code must use `pathlib` for paths and handle OS differences (macOS/Linux).
 
 ## 🔄 Current State
-- **Phase**: Sprint 0 - COMPLETE
-- **Status**: Feature "File Cleaner" completed.
+- **Phase**: Lot 2 - Dependency Management (Upcoming)
+- **Status**: Toolbox Core & Git Health Check implemented.
 - **Core Components**:
+    - `toolbox.py`: Central CLI (list, run, new).
     - `core/system_check.py`: Validates environment.
-    - `.cursorrules`: Project rules.
-    - `scripts/image_resizer/`: JPEG batch processing tool.
-    - `scripts/file_cleaner/`: File cleanup utility.
+    - `scripts/`:
+        - `image_resizer/`: JPEG batch processing.
+        - `file_cleaner/`: File cleanup (depth control, dry-run).
+        - `git_health/`: Git repository audit.
 
 ## 📅 Next Steps
-- Complete Sprint 0 validation.
-- Begin Lot 1: `toolbox.py` CLI development.
+- Automate dependency management (Lot 2).
+- Improve cross-platform path handling.

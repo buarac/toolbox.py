@@ -3,38 +3,35 @@
 A structured, portable (macOS & Ubuntu) ecosystem for Python utility scripts.
 
 ## 🚀 Features
-- Modular architecture (`/scripts`, `/core`)
-- Centralized dependency management
-- CLI entry point (`toolbox.py` - *Coming Soon*)
-- Cross-platform compatibility (macOS/Linux)
+- **Central CLI**: `toolbox.py` to manage and run all tools.
+- **Modular Tools**:
+    - `image_resizer`: Batch resize/compress images.
+    - `file_cleaner`: Auto-delete old files with safety checks.
+    - `git_health`: Quick audit of git repo status.
 
-## 🛠️ Setup
+## 🛠️ Usage
 
-1. **Prerequisites**
-   - Python 3.12+
-   - macOS 14+ (Sonoma) or Ubuntu 22.04+
+### General
+Use the `toolbox.py` CLI to discover and run tools:
+```bash
+./toolbox.py list             # List all available tools
+./toolbox.py run [tool_name]  # Run a specific tool
+./toolbox.py new [name]       # Create a new tool
+```
 
-2. **Installation**
-   ```bash
-   # Clone the repo (if not already done)
-   
-   # Create virtual environment
-   python3 -m venv .venv
-   source .venv/bin/activate
-   
-   # Install dependencies
-   pip install -r requirements.txt
-   ```
+### Examples
+**File Cleaner**:
+```bash
+./toolbox.py run cleaner -- --directory ~/Downloads --days 30 --dry-run
+```
 
-3. **Verification**
-   Run the system check to verify compatibility:
-   ```bash
-   python3 core/system_check.py
-   ```
+**Git Health**:
+```bash
+./toolbox.py run git_health
+```
 
 ## 📂 Structure
+- `toolbox.py`: Entry point.
 - `scripts/`: Utility scripts.
-    - `image_resizer/`: Batch JPEG resizer & compressor.
-    - `file_cleaner/`: Delete files older than N days.
-- `core/`: Shared utilities and internal logic.
+- `core/`: Shared utilities.
 - `docs/`: Documentation.
