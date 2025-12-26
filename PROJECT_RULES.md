@@ -36,3 +36,9 @@ Chaque script dans /scripts/ doit suivre ce template minimal :
 
 * Lorsqu'un nouveau script est "commandé", l'agent doit d'abord vérifier si une fonction existante dans /core/ peut être réutilisée.  
 * L'agent doit automatiquement mettre à jour le README.md principal pour inclure le nouveau script dans la liste des outils disponibles.
+
+## **📊 VISUALISATION & ARTEFACTS**
+
+* **Mermaid** : Lors de la génération de diagrammes Mermaid (flowchart, graph, etc.), il est **impératif de mettre des guillemets** autour des libellés contenant des caractères spéciaux, des espaces ou des émojis.
+    * ❌ Incorrect: `Start --> Do(Action 🚀)`
+    * ✅ Correct: `Start --> Do("Action 🚀")`
