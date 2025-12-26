@@ -1,0 +1,38 @@
+[
+  {
+    "id": "7e5dbf98",
+    "first_name": "Sacha",
+    "last_name": "Stefanovic",
+    "city": "Paris",
+    "country": "France",
+    "lat": 48.85341,
+    "lon": 2.3488
+  },
+  {
+    "id": "438f019c",
+    "first_name": "Anastazija",
+    "last_name": "An",
+    "city": "Madrid",
+    "country": "Spain",
+    "lat": 40.4165,
+    "lon": -3.70256
+  },
+  {
+    "id": "619f192d",
+    "first_name": "Vlada",
+    "last_name": "Da",
+    "city": "Moscow",
+    "country": "Russia",
+    "lat": 55.75222,
+    "lon": 37.61556
+  },
+  {
+    "id": "ad4882eb",
+    "first_name": "Vera",
+    "last_name": "Stefanovic",
+    "city": "Kisiljevo",
+    "country": "Serbia",
+    "lat": 44.73723,
+    "lon": 21.41982
+  }
+]

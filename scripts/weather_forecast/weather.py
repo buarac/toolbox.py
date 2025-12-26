@@ -14,38 +14,43 @@ Example:
 import argparse
 import logging
 import sys
-import webbrowser
 import tempfile
-from pathlib import Path
+import webbrowser
 from datetime import datetime
+
 import requests
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format="%(message)s")
 
+
 def setup_args():
     parser = argparse.ArgumentParser(description="Weather Forecast Tool")
-    parser.add_argument("--city", type=str, default="Paris", help="City name (default: Paris)")
+    parser.add_argument(
+        "--city", type=str, default="Paris", help="City name (default: Paris)"
+    )
     return parser.parse_args()
+
 
 def get_coordinates(city_name):
     """Fetch latitude and longitude for a city."""
     url = "https://geocoding-api.open-meteo.com/v1/search"
     params = {"name": city_name, "count": 1, "language": "en", "format": "json"}
-    
+
     try:
         response = requests.get(url, params=params, timeout=10)
         response.raise_for_status()
         data = response.json()
-        
+
         if not data.get("results"):
             return None, None, None
-            
+
         result = data["results"][0]
         return result["latitude"], result["longitude"], result["name"]
     except requests.RequestException as e:
         logging.error(f"❌ Connection error (Geocoding): {e}")
         return None, None, None
+
 
 def get_forecast(lat, lon):
     """Fetch 7-day forecast with extended metrics."""
@@ -62,11 +67,11 @@ def get_forecast(lat, lon):
             "sunset",
             "uv_index_max",
             "precipitation_probability_max",
-            "wind_speed_10m_max"
+            "wind_speed_10m_max",
         ],
-        "timezone": "auto"
+        "timezone": "auto",
     }
-    
+
     try:
         response = requests.get(url, params=params, timeout=10)
         response.raise_for_status()
@@ -75,16 +80,25 @@ def get_forecast(lat, lon):
         logging.error(f"❌ Connection error (Forecast): {e}")
         return None
 
+
 def get_weather_emoji(code):
     """Map WMO weather code to emoji."""
-    if code == 0: return "☀️"
-    if 1 <= code <= 3: return "⛅"
-    if 45 <= code <= 48: return "🌫️"
-    if 51 <= code <= 67: return "🌧️"
-    if 71 <= code <= 77: return "❄️"
-    if 80 <= code <= 82: return "🌦️"
-    if 95 <= code <= 99: return "⛈️"
+    if code == 0:
+        return "☀️"
+    if 1 <= code <= 3:
+        return "⛅"
+    if 45 <= code <= 48:
+        return "🌫️"
+    if 51 <= code <= 67:
+        return "🌧️"
+    if 71 <= code <= 77:
+        return "❄️"
+    if 80 <= code <= 82:
+        return "🌦️"
+    if 95 <= code <= 99:
+        return "⛈️"
     return "🌡️"
+
 
 def generate_html(city, data):
     """Generate rich HTML report."""
@@ -99,18 +113,18 @@ def generate_html(city, data):
     sunset = daily["sunset"]
     uv_index = daily["uv_index_max"]
     wind = daily["wind_speed_10m_max"]
-    
+
     cards = ""
     for i in range(len(dates)):
         date_obj = datetime.strptime(dates[i], "%Y-%m-%d")
         day_name = date_obj.strftime("%A")
         full_date = date_obj.strftime("%d %B")
         emoji = get_weather_emoji(codes[i])
-        
+
         # Format times
         sr = datetime.fromisoformat(sunrise[i]).strftime("%H:%M")
         ss = datetime.fromisoformat(sunset[i]).strftime("%H:%M")
-        
+
         cards += f"""
         <div class="card">
             <div class="card-header">
@@ -220,32 +234,35 @@ def generate_html(city, data):
     """
     return html_content
 
+
 def main():
     args = setup_args()
     city = args.city
-    
+
     logging.info(f"🌍 Searching for city: {city}...")
     lat, lon, found_name = get_coordinates(city)
-    
+
     if not lat:
         logging.error(f"❌ City '{city}' not found.")
         sys.exit(1)
-        
+
     logging.info(f"📍 Found: {found_name} ({lat:.2f}, {lon:.2f})")
-    
+
     logging.info("🌤️  Fetching extended 7-day forecast...")
     data = get_forecast(lat, lon)
-    
+
     if not data:
         sys.exit(1)
-        
+
     # Console Output
     print("\n-------------------------------------------------------------------------")
     print(f" 📅 7-Day Forecast for {found_name}")
     print("-------------------------------------------------------------------------")
-    print(f"{'Date':<12} | {'Wx':<3} | {'Min/Max':<9} | {'Rain':<9} | {'Wind':<8} | {'UV':<3}")
+    print(
+        f"{'Date':<12} | {'Wx':<3} | {'Min/Max':<9} | {'Rain':<9} | {'Wind':<8} | {'UV':<3}"
+    )
     print("-------------------------------------------------------------------------")
-    
+
     daily = data["daily"]
     for i in range(len(daily["time"])):
         date_obj = datetime.strptime(daily["time"][i], "%Y-%m-%d")
@@ -258,32 +275,36 @@ def main():
         uv = round(daily["uv_index_max"][i])
         code = daily["weather_code"][i]
         emoji = get_weather_emoji(code)
-        
+
         temp_str = f"{min_t}/{max_t}°"
         rain_str = f"{rain_prob}%" if rain_prob > 0 else "0%"
         if rain_sum > 0:
-             rain_str += f" ({rain_sum}mm)"
-             
-        print(f"{date:<12} | {emoji:<3} | {temp_str:<9} | {rain_str:<9} | {wind}km/h   | {uv:<3}")
-        
+            rain_str += f" ({rain_sum}mm)"
+
+        print(
+            f"{date:<12} | {emoji:<3} | {temp_str:<9} | {rain_str:<9} | {wind}km/h   | {uv:<3}"
+        )
+
     print("-------------------------------------------------------------------------\n")
-    
+
     # HTML Output
     logging.info("📄 Generating rich HTML report...")
     html_content = generate_html(found_name, data)
-    
+
     try:
         # Create a temporary file
         fd, path = tempfile.mkstemp(suffix=".html", prefix=f"weather_{found_name}_")
-        with os.fdopen(fd, 'w') as f:
+        with os.fdopen(fd, "w") as f:
             f.write(html_content)
-            
+
         logging.info(f"🚀 Opening report in browser: {path}")
         webbrowser.open(f"file://{path}")
-        
+
     except Exception as e:
         logging.error(f"❌ Failed to open browser: {e}")
 
+
 if __name__ == "__main__":
-    import os # Late import for os.fdopen used in main
+    import os  # Late import for os.fdopen used in main
+
     main()

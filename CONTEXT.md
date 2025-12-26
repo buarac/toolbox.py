@@ -19,6 +19,7 @@
         - `file_cleaner/`: File cleanup (depth control, dry-run).
         - `git_health/`: Git repository audit.
         - `disk_usage/`: Directory size calculator.
+        - `weather_forecast/`: Weather forecast and HTML report.
 
 ## 📅 Next Steps
 - **CI/CD**: Add linter integration to toolbox (check code quality).

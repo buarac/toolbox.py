@@ -5,9 +5,11 @@ A structured, portable (macOS & Ubuntu) ecosystem for Python utility scripts.
 ## 🚀 Features
 - **Central CLI**: `toolbox.py` to manage and run all tools.
 - **Modular Tools**:
-    - `image_resizer`: Batch resize/compress images.
-    - `file_cleaner`: Auto-delete old files with safety checks.
+    - `resizer`: Batch resize/compress images.
+    - `cleaner`: Auto-delete old files with safety checks.
     - `git_health`: Quick audit of git repo status.
+    - `usage`: Calculate disk usage for directories.
+    - `weather`: 7-day weather forecast with rich HTML report.
 - **Dependency Management**:
     - Automatic dependency check before launch.
     - `install` command to setup environment.

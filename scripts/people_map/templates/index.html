@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="sr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mapa Ljudi 🌍</title>
+
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --glass: rgba(255, 255, 255, 0.95);
+            --shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.3);
+            --text: #1f2937;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-gradient);
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            color: var(--text);
+            overflow: hidden;
+        }
+
+        /* Layout */
+        .sidebar {
+            width: 350px;
+            background: var(--glass);
+            padding: 30px;
+            box-shadow: 10px 0 30px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+        }
+
+        .map-container {
+            flex-grow: 1;
+            z-index: 1;
+        }
+
+        #map {
+            height: 100%;
+            width: 100%;
+        }
+
+        /* Typography */
+        h1 {
+            font-size: 1.8rem;
+            margin-bottom: 2rem;
+            color: #111;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Form */
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #4b5563;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 1rem;
+            box-sizing: border-box;
+            transition: border-color 0.2s;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background: var(--primary-hover);
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        button:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+        }
+
+        /* List */
+        .people-list {
+            margin-top: 30px;
+            flex-grow: 1;
+            overflow-y: auto;
+            border-top: 1px solid #e5e7eb;
+            padding-top: 20px;
+        }
+
+        h2 {
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            color: #374151;
+        }
+
+        .person-card {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            border: 1px solid #f3f4f6;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: transform 0.2s;
+        }
+
+        .person-card:hover {
+            transform: translateX(5px);
+            border-color: var(--primary);
+        }
+
+        .person-info h3 {
+            margin: 0;
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .person-info p {
+            margin: 5px 0 0 0;
+            font-size: 0.85rem;
+            color: #6b7280;
+        }
+
+        .delete-btn {
+            background: none;
+            color: #ef4444;
+            padding: 5px;
+            width: auto;
+            margin: 0;
+            font-size: 1.2rem;
+        }
+
+        .delete-btn:hover {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        /* Loading */
+        .loading {
+            display: none;
+            text-align: center;
+            margin-top: 10px;
+            color: var(--primary);
+            font-size: 0.9rem;
+        }
+
+        /* Leaflet Tweaks */
+        .custom-popup .leaflet-popup-content-wrapper {
+            border-radius: 8px;
+            padding: 5px;
+        }
+
+        .custom-popup h3 {
+            margin: 0 0 5px 0;
+            color: var(--primary);
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="sidebar">
+        <h1>🌍 Mapa Ljudi</h1>
+
+        <form id="addForm">
+            <div class="form-group">
+                <label for="firstName">Ime</label>
+                <input type="text" id="firstName" placeholder="Sacha" required>
+            </div>
+
+            <div class="form-group">
+                <label for="lastName">Prezime</label>
+                <input type="text" id="lastName" placeholder="Petrovic" required>
+            </div>
+
+            <div class="form-group">
+                <label for="city">Grad</label>
+                <input type="text" id="city" placeholder="Beograd" required>
+            </div>
+
+            <button type="submit" id="submitBtn">Dodaj Osobu</button>
+            <div class="loading" id="loading">Tražim lokaciju... ⏳</div>
+        </form>
+
+        <div class="people-list">
+            <h2>Spisak (0)</h2>
+            <div id="listContainer">
+                <!-- People cards go here -->
+            </div>
+        </div>
+    </div>
+
+    <div class="map-container">
+        <div id="map"></div>
+    </div>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <script>
+        // Init Map
+        const map = L.map('map').setView([44.787, 20.457], 5); // Default: Belgrade focus
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+
+        const markers = {};
+        const listContainer = document.getElementById('listContainer');
+        const countHeader = document.querySelector('.people-list h2');
+        const submitBtn = document.getElementById('submitBtn');
+        const loading = document.getElementById('loading');
+
+        // Fetch & Render
+        async function loadPeople() {
+            const res = await fetch('/api/people');
+            const data = await res.json();
+            render(data);
+        }
+
+        function render(people) {
+            // Update Count
+            countHeader.textContent = `Spisak (${people.length})`;
+
+            // Clear List & Markers
+            listContainer.innerHTML = '';
+            // Remove old markers
+            Object.values(markers).forEach(m => map.removeLayer(m));
+
+            people.forEach(person => {
+                // Add Marker
+                const marker = L.marker([person.lat, person.lon]).addTo(map);
+                marker.bindPopup(`
+                    <div class="custom-popup">
+                        <h3>${person.first_name} ${person.last_name}</h3>
+                        <p>📍 ${person.city}, ${person.country}</p>
+                    </div>
+                `);
+                markers[person.id] = marker;
+
+                // Add List Item
+                const card = document.createElement('div');
+                card.className = 'person-card';
+                card.innerHTML = `
+                    <div class="person-info">
+                        <h3>${person.first_name} ${person.last_name}</h3>
+                        <p>📍 ${person.city}, ${person.country}</p>
+                    </div>
+                    <button class="delete-btn" onclick="deletePerson('${person.id}')" title="Obriši">×</button>
+                `;
+
+                // Click to zoom
+                card.querySelector('.person-info').addEventListener('click', () => {
+                    map.flyTo([person.lat, person.lon], 10);
+                    marker.openPopup();
+                });
+
+                listContainer.appendChild(card);
+            });
+        }
+
+        // Add Person
+        document.getElementById('addForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const firstName = document.getElementById('firstName').value;
+            const lastName = document.getElementById('lastName').value;
+            const city = document.getElementById('city').value;
+
+            // UI Loading state
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Dodavanje...';
+            loading.style.display = 'block';
+
+            try {
+                const res = await fetch('/api/add', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        first_name: firstName,
+                        last_name: lastName,
+                        city: city
+                    })
+                });
+
+                if (res.ok) {
+                    // Reset form
+                    e.target.reset();
+                    document.getElementById('firstName').focus();
+                    loadPeople(); // Reload
+                } else {
+                    alert('Greška: Grad nije pronađen ili server ne odgovara.');
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Došlo je do greške.');
+            }
+
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Dodaj Osobu';
+            loading.style.display = 'none';
+        });
+
+        // Delete Person
+        async function deletePerson(id) {
+            if (!confirm('Da li ste sigurni da želite da obrišete ovu osobu?')) return;
+
+            await fetch(`/api/delete/${id}`, { method: 'DELETE' });
+            loadPeople();
+        }
+
+        // Initial Load
+        loadPeople();
+    </script>
+</body>
+
+</html>
