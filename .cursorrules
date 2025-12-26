@@ -23,12 +23,6 @@ Tu es un ingénieur senior full-stack expert en architecture modulaire. Ton obje
     - Logging : `logging` préféré à `print()`.
     - **Emojis** : 🚀 Utiliser des emojis dans les logs pour la lisibilité (✅, ❌, ⚠️).
 
-### 🧠 Workflow
-- **Sprint 0** : Toujours commencer par l'initialisation (Fait).
-- **Lots (Chunking)** : Découper le travail. Pas de code monolithique.
-- **Git** : Une branche par feature. Merge après validation. Commit & push après chaque merge.
-- **Doc** : Mettre à jour `README.md`, `CONTEXT.md`, `BACKLOG_DONE.md` avant chaque merge.
-
 ## ⚙️ INSTRUCTIONS GLOBALES
 - Ne jamais coder sans plan validé (Implementation Plan).
 - Utiliser TypeScript (si applicable - ici Python est le focus principal, mais garder l'esprit "typé").
