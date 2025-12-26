@@ -44,4 +44,10 @@
 - **Formatting**: Integrated auto-formatting via `toolbox.py check --fix`.
 - **Config**: Added `pyproject.toml` for tool configuration.
 - **Cleanup**: Fixed all linting errors (unused imports, line lengths, variables).
+- **Cleanup**: Fixed all linting errors (unused imports, line lengths, variables).
 - **Robustness**: Verified cross-platform compatibility (pathlib usage).
+
+## Lot 4: Weather Forecast
+- **Feature**: Forecast 7 jours avec Open-Meteo API.
+- **Output**: Tableau console + Rapport HTML (auto-open).
+- **Tech**: `requests`, Geocoding, `webbrowser`.
