@@ -47,10 +47,16 @@ def setup_args():
         default=1.0,
         help="Delay between requests in seconds (default: 1.0)",
     )
+    parser.add_argument(
+        "--limit",
+        type=int,
+        default=50,
+        help="Maximum number of pages to scan/scrape (default: 50)",
+    )
     return parser.parse_args()
 
 
-def get_sitemap_urls(base_url):
+def get_sitemap_urls(base_url, limit=None):
     """Attempt to fetch URLs from sitemap.xml"""
     sitemap_url = urljoin(base_url, "/sitemap.xml")
     logging.info(f"🔎 Checking for sitemap at: {sitemap_url}")
@@ -58,9 +64,19 @@ def get_sitemap_urls(base_url):
     try:
         response = requests.get(sitemap_url, timeout=10)
         if response.status_code == 200:
-            soup = BeautifulSoup(response.content, "xml")
+            # Try lxml first, fall back to xml
+            try:
+                soup = BeautifulSoup(response.content, "xml")
+            except Exception:
+                soup = BeautifulSoup(response.content, "lxml-xml")
+                
             urls = [loc.text for loc in soup.find_all("loc")]
+            
             if urls:
+                if limit and len(urls) > limit:
+                     logging.info(f"⚠️ Limiting sitemap URLs from {len(urls)} to {limit}")
+                     urls = urls[:limit]
+                     
                 logging.info(f"✅ Found {len(urls)} URLs in sitemap.")
                 return urls
     except Exception as e:
@@ -111,7 +127,7 @@ def crawl_site(base_url, max_pages=50):
     return found_urls
 
 
-def step_scan(url, output_dir):
+def step_scan(url, output_dir, limit=50):
     """Step 1: Identify pages to scrape."""
     if not url:
         logging.error("❌ --url is required for scanning.")
@@ -121,10 +137,10 @@ def step_scan(url, output_dir):
     output_path.mkdir(parents=True, exist_ok=True)
 
     # Strategy: Sitemap first, then Crawl
-    urls = get_sitemap_urls(url)
+    urls = get_sitemap_urls(url, limit)
     if not urls:
         logging.info("⚠️ No sitemap found. Falling back to crawler.")
-        urls = crawl_site(url)
+        urls = crawl_site(url, max_pages=limit)
 
     if not urls:
         logging.error("❌ No URLs found. Exiting.")
@@ -205,7 +221,7 @@ def main():
     args = setup_args()
 
     if args.step == "scan":
-        step_scan(args.url, args.output)
+        step_scan(args.url, args.output, args.limit)
     elif args.step == "scrape":
         step_scrape(args.output, args.delay)
 
