@@ -56,7 +56,7 @@ def setup_args():
     return parser.parse_args()
 
 
-def get_sitemap_urls(base_url, limit=None):
+def get_sitemap_urls(base_url, limit=None, output_dir=None):
     """Attempt to fetch URLs from sitemap.xml recursively."""
     # If it's a direct XML file (recursion), use it. otherwise assume standard location.
     target_url = base_url if base_url.endswith(".xml") else urljoin(base_url, "/sitemap.xml")
@@ -69,6 +69,23 @@ def get_sitemap_urls(base_url, limit=None):
     try:
         response = requests.get(target_url, timeout=10)
         if response.status_code == 200:
+            # Save sitemap file if output_dir is provided
+            if output_dir:
+                sitemaps_dir = Path(output_dir) / "sitemaps"
+                sitemaps_dir.mkdir(parents=True, exist_ok=True)
+                
+                # Extract filename from URL
+                filename = Path(urlparse(target_url).path).name
+                if not filename.endswith(".xml"):
+                    filename = "sitemap.xml"
+                
+                # Handle potential duplicate filenames in recursion? 
+                # For now, let's assume they are unique enough or overwriting is acceptable/unlikely for same run.
+                save_path = sitemaps_dir / filename
+                with open(save_path, "wb") as f:
+                    f.write(response.content)
+                logging.info(f"💾 Saved sitemap to: {save_path}")
+
             # Try lxml first, fall back to xml
             try:
                 soup = BeautifulSoup(response.content, "xml")
@@ -87,7 +104,7 @@ def get_sitemap_urls(base_url, limit=None):
                 if limit and len(final_urls) >= limit:
                     break
                 logging.info(f"📂 Found nested sitemap: {sm}")
-                child_urls = get_sitemap_urls(sm, limit)
+                child_urls = get_sitemap_urls(sm, limit, output_dir)
                 final_urls.extend(child_urls)
             
             # Apply limit
@@ -158,7 +175,7 @@ def step_scan(url, output_dir, limit=50):
     output_path.mkdir(parents=True, exist_ok=True)
 
     # Strategy: Sitemap first, then Crawl
-    urls = get_sitemap_urls(url, limit)
+    urls = get_sitemap_urls(url, limit, output_dir)
     if not urls:
         logging.info("⚠️ No sitemap found. Falling back to crawler.")
         urls = crawl_site(url, max_pages=limit)
