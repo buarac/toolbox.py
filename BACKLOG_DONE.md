@@ -58,3 +58,9 @@
 - **Features**: Interactive Map (Leaflet), Geocoding (Open-Meteo), Persistence (JSON).
 - **UX**: "Wow" design, auto-browser open, fast interactions.
 - **Tech**: Flask, LeafletJS, threading.
+
+## Lot 6: Web Scraper
+- **Features**: 2-Step Process (Scan/Scrape), Sitemap parsing, Recursive fallback.
+- **Conversion**: HTML to Markdown (markdownify), frontmatter metadata.
+- **UX**: Polite scraping (configurable delay), Progress bar (tqdm).
+- **Tech**: `beautifulsoup4`, `markdownify`, `tqdm`.

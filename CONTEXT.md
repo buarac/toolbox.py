@@ -7,7 +7,7 @@
 
 ## 🔄 Current State
 - **Phase**: Maintenance & New Features
-- **Status**: Lot 5 (People Map) complete. Toolbox has 6 active tools.
+- **Status**: Lot 6 (Web Scraper) complete. Toolbox has 7 active tools.
 
 
 
@@ -20,6 +20,7 @@
         - `git_health/`: Git repository audit.
         - `disk_usage/`: Directory size calculator.
         - `weather_forecast/`: Weather forecast and HTML report.
+        - `web_scraper/`: Gentle site scraper (Scan -> Scrape).
 
 ## 📅 Next Steps
 - **CI/CD**: Add linter integration to toolbox (check code quality).

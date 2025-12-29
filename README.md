@@ -10,6 +10,7 @@ A structured, portable (macOS & Ubuntu) ecosystem for Python utility scripts.
     - `git_health`: Quick audit of git repo status.
     - `usage`: Calculate disk usage for directories.
     - `weather`: 7-day weather forecast with rich HTML report.
+    - `web_scraper`: Two-step (scan/scrape) site-to-markdown converter.
 - **Dependency Management**:
     - Automatic dependency check before launch.
     - `install` command to setup environment.
@@ -43,6 +44,15 @@ Use the `toolbox.py` CLI to discover and run tools:
 **Disk Usage**:
 ```bash
 ./toolbox.py run usage -- --path ~/Projects --depth 2
+```
+
+**Web Scraper**:
+```bash
+# Step 1: Scan
+./toolbox.py run web_scraper -- --url "https://example.com" --output "docs" --step scan
+
+# Step 2: Scrape
+./toolbox.py run web_scraper -- --output "docs" --step scrape
 ```
 
 ## 📂 Structure
