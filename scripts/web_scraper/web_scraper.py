@@ -57,30 +57,51 @@ def setup_args():
 
 
 def get_sitemap_urls(base_url, limit=None):
-    """Attempt to fetch URLs from sitemap.xml"""
-    sitemap_url = urljoin(base_url, "/sitemap.xml")
-    logging.info(f"🔎 Checking for sitemap at: {sitemap_url}")
+    """Attempt to fetch URLs from sitemap.xml recursively."""
+    # If it's a direct XML file (recursion), use it. otherwise assume standard location.
+    target_url = base_url if base_url.endswith(".xml") else urljoin(base_url, "/sitemap.xml")
+    
+    if not base_url.endswith(".xml"):
+        logging.info(f"🔎 Checking for sitemap at: {target_url}")
 
+    final_urls = []
+    
     try:
-        response = requests.get(sitemap_url, timeout=10)
+        response = requests.get(target_url, timeout=10)
         if response.status_code == 200:
             # Try lxml first, fall back to xml
             try:
                 soup = BeautifulSoup(response.content, "xml")
             except Exception:
                 soup = BeautifulSoup(response.content, "lxml-xml")
-                
-            urls = [loc.text for loc in soup.find_all("loc")]
             
-            if urls:
-                if limit and len(urls) > limit:
-                     logging.info(f"⚠️ Limiting sitemap URLs from {len(urls)} to {limit}")
-                     urls = urls[:limit]
-                     
-                logging.info(f"✅ Found {len(urls)} URLs in sitemap.")
-                return urls
+            # Check for nested sitemaps (SitemapIndex)
+            sitemaps = [loc.text for loc in soup.find_all("loc") if loc.text.endswith(".xml")]
+            pages = [loc.text for loc in soup.find_all("loc") if not loc.text.endswith(".xml")]
+            
+            # Add direct pages
+            final_urls.extend(pages)
+            
+            # Recurse into child sitemaps
+            for sm in sitemaps:
+                if limit and len(final_urls) >= limit:
+                    break
+                logging.info(f"📂 Found nested sitemap: {sm}")
+                child_urls = get_sitemap_urls(sm, limit)
+                final_urls.extend(child_urls)
+            
+            # Apply limit
+            if limit and len(final_urls) > limit:
+                 # logging.info(f"⚠️ Limiting sitemap URLs to {limit}") # Reduce noise
+                 final_urls = final_urls[:limit]
+
+            if not base_url.endswith(".xml"):
+                logging.info(f"✅ Found {len(final_urls)} URLs in sitemap (recursive).")
+            
+            return final_urls
+
     except Exception as e:
-        logging.warning(f"⚠️ Could not fetch sitemap: {e}")
+        logging.warning(f"⚠️ Could not fetch sitemap {target_url}: {e}")
 
     return []
 
